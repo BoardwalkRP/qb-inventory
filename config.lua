@@ -16,9 +16,9 @@ Config.UseItemDrop = false                      -- This will enable item object 
 Config.ItemDropObject = `prop_nigel_bag_pickup` -- if Config.UseItemDrop is true, this will be the prop that spawns for the item
 
 Config.VendingObjects = {
-    'prop_vend_soda_01',
+--[[     'prop_vend_soda_01',
     'prop_vend_soda_02',
-    'prop_vend_water_01'
+    'prop_vend_water_01' ]]
 }
 
 Config.BinObjects = {
