@@ -51,7 +51,11 @@ local function LoadInventory(source, citizenid)
 	end
 
 	if #missingItems > 0 then
-		print(('The following items were removed for player %s as they no longer exist'):format(GetPlayerName(source)))
+		QBCore.Debug({
+			'Missing items removed from inventory',
+			(source and GetPlayerName(source) or citizenid),
+			missingItems,
+		})
 	end
 
 	return loadedInventory
@@ -2119,8 +2123,11 @@ RegisterNetEvent('inventory:server:SetInventoryData', function(fromInventory, to
 				end
 			end
 		elseif QBCore.Shared.SplitStr(shopType, '_')[1] == 'Itemshop' then
+			local isWeapon = false
+
 			if Player.Functions.RemoveMoney('cash', price, 'itemshop-bought-item') then
 				if QBCore.Shared.SplitStr(itemData.name, '_')[1] == 'weapon' then
+					isWeapon = true
 					itemData.info.serie = tostring(QBCore.Shared.RandomInt(2) .. QBCore.Shared.RandomStr(3) .. QBCore.Shared.RandomInt(1) .. QBCore.Shared.RandomStr(2) .. QBCore.Shared.RandomInt(3) .. QBCore.Shared.RandomStr(4))
 					itemData.info.quality = 100
 				end
@@ -2131,6 +2138,7 @@ RegisterNetEvent('inventory:server:SetInventoryData', function(fromInventory, to
 			elseif bankBalance >= price then
 				Player.Functions.RemoveMoney('bank', price, 'itemshop-bought-item')
 				if QBCore.Shared.SplitStr(itemData.name, '_')[1] == 'weapon' then
+					isWeapon = true
 					itemData.info.serie = tostring(QBCore.Shared.RandomInt(2) .. QBCore.Shared.RandomStr(3) .. QBCore.Shared.RandomInt(1) .. QBCore.Shared.RandomStr(2) .. QBCore.Shared.RandomInt(3) .. QBCore.Shared.RandomStr(4))
 					itemData.info.quality = 100
 				end
@@ -2140,6 +2148,17 @@ RegisterNetEvent('inventory:server:SetInventoryData', function(fromInventory, to
 				TriggerEvent('qb-log:server:CreateLog', 'shops', 'Shop item bought', 'green', '**' .. GetPlayerName(src) .. '** bought a ' .. itemInfo['label'] .. ' for $' .. price)
 			else
 				QBCore.Functions.Notify(src, "You don't have enough cash..", 'error')
+			end
+
+			if isWeapon then
+				for _, license in ipairs(itemData.requiredLicense) do
+					if license == 'weapon' then
+						exports['ps-mdt']:CreateWeaponInfo(itemData.info.serie, ("https://cfx-nui-qb-inventory/html/images/%s.png"):format(itemData.name), '',
+							Player.PlayerData.charinfo.firstname .. " " .. Player.PlayerData.charinfo.lastname, 1,
+							QBCore.Shared.Items[itemData.name].label)
+						break
+					end
+				end
 			end
 		else
 			if Player.Functions.RemoveMoney('cash', price, 'unkown-itemshop-bought-item') then
