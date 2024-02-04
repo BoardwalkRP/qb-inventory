@@ -381,6 +381,18 @@ function generateDescription(itemData) {
             } else if (itemData.info.type == "dna") {
                 return `<p><strong>Evidence material: </strong><span>${itemData.info.label}</span></p>
                 <p><strong>DNA Code: </strong><span>${itemData.info.dnalabel}</span></p><br /><p>${itemData.description}</p>`;
+            } else if (itemData.info.type == "other") {
+                let _info = `
+                <p><strong>Evidence material: </strong><span>${itemData.info.label}</span></p>
+                <p><strong>Crime Scene: </strong><span>${itemData.info.street}</span></p>`
+                if (itemData.info.dnalabel) {
+                    _info = _info + `<p><strong>DNA Code: </strong><span>${itemData.info.dnalabel}</span></p>`
+                }
+                if (itemData.info.fingerprint) {
+                    _info = _info + `<p><strong>Fingerprint: </strong><span>${itemData.info.fingerprint}</span></p>`
+                }
+                _info = _info + `<br /><p>${itemData.description}</p>`
+                return _info
             }
         case "stickynote":
             return `<p>${itemData.info.label}</p>`;
