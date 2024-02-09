@@ -2150,7 +2150,7 @@ RegisterNetEvent('inventory:server:SetInventoryData', function(fromInventory, to
 				QBCore.Functions.Notify(src, "You don't have enough cash..", 'error')
 			end
 
-			if isWeapon then
+			if isWeapon and itemData.requiredLicense then
 				for _, license in ipairs(itemData.requiredLicense) do
 					if license == 'weapon' then
 						exports['ps-mdt']:CreateWeaponInfo(itemData.info.serie, ("https://cfx-nui-qb-inventory/html/images/%s.png"):format(itemData.name), '',
